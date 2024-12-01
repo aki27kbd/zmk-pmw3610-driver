@@ -636,7 +636,7 @@ static int pmw3610_report_data(const struct device *dev) {
 
     // Dynamic multiplier: slower for small movements, faster for large
     float dynamic_multiplier = 1.0 + movement_magnitude / 10.0; // Adjust divisor for desired scaling
-    dynamic_multiplier = fmin(fmax(dynamic_multiplier, 0.5), 3.0); // Clamp between 0.5 and 3.0
+    dynamic_multiplier = fmin(fmax(dynamic_multiplier, 0.5), 2.0); // Clamp between 0.5 and 3.0
     raw_x = raw_x * dynamic_multiplier;
     raw_y = raw_y * dynamic_multiplier;
 #endif
