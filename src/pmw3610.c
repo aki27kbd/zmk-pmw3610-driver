@@ -625,10 +625,24 @@ static int pmw3610_report_data(const struct device *dev) {
         return err;
     }
 
+    static float x_accumulator = 0.0;
+    static float y_accumulator = 0.0;
+    static float prev_x = 0.0, prev_y = 0.0;
+
+    float sensitivity = 0.5;           // Movement sensitivity
+    float smoothing_factor = 0.7;     // Smoothing factor
+    float sensitivity_multiplier = 1.5; // Base sensitivity multiplier
+
     int16_t raw_x =
         TOINT16((buf[PMW3610_X_L_POS] + ((buf[PMW3610_XY_H_POS] & 0xF0) << 4)), 12) / dividor;
     int16_t raw_y =
         TOINT16((buf[PMW3610_Y_L_POS] + ((buf[PMW3610_XY_H_POS] & 0x0F) << 8)), 12) / dividor;
+
+    // Apply smoothing to the rotated values
+    float raw_x = prev_x * smoothing_factor + raw_x * (1.0 - smoothing_factor);
+    float raw_y = prev_y * smoothing_factor + raw_y * (1.0 - smoothing_factor);
+    prev_x = raw_x;
+    prev_y = raw_y;
 
 #ifdef CONFIG_PMW3610_DYNAMIC_MOUSESPEED
     // Calculate the magnitude of movement
