@@ -639,37 +639,37 @@ static int pmw3610_report_data(const struct device *dev) {
         TOINT16((buf[PMW3610_Y_L_POS] + ((buf[PMW3610_XY_H_POS] & 0x0F) << 8)), 12) / dividor;
 
     // Apply smoothing to the rotated values
-    float raw_x = prev_x * smoothing_factor + raw_x * (1.0 - smoothing_factor);
-    float raw_y = prev_y * smoothing_factor + raw_y * (1.0 - smoothing_factor);
-    prev_x = raw_x;
-    prev_y = raw_y;
+    float smoothed_x = prev_x * smoothing_factor + raw_x * (1.0 - smoothing_factor);
+    float smoothed_y = prev_y * smoothing_factor + raw_y * (1.0 - smoothing_factor);
+    prev_x = smoothed_x;
+    prev_y = smoothed_y;
 
 #ifdef CONFIG_PMW3610_DYNAMIC_MOUSESPEED
     // Calculate the magnitude of movement
-    float movement_magnitude = sqrt(raw_x * raw_x + raw_y * raw_y);
+    float movement_magnitude = sqrt(smoothed_x * smoothed_x + smoothed_y * smoothed_y);
 
     // Dynamic multiplier: slower for small movements, faster for large
     float dynamic_multiplier = 1.0 + movement_magnitude / 10.0; // Adjust divisor for desired scaling
     dynamic_multiplier = fmin(fmax(dynamic_multiplier, 0.5), 2.0); // Clamp between 0.5 and 3.0
-    raw_x = raw_x * dynamic_multiplier;
-    raw_y = raw_y * dynamic_multiplier;
+    smoothed_x = smoothed_x * dynamic_multiplier;
+    smoothed_y = smoothed_y * dynamic_multiplier;
 #endif
 
     int16_t x;
     int16_t y;
 
     if (IS_ENABLED(CONFIG_PMW3610_ORIENTATION_0)) {
-        x = -raw_x;
-        y = raw_y;
+        x = -smoothed_x;
+        y = smoothed_y;
     } else if (IS_ENABLED(CONFIG_PMW3610_ORIENTATION_90)) {
-        x = raw_y;
-        y = -raw_x;
+        x = smoothed_y;
+        y = -smoothed_x;
     } else if (IS_ENABLED(CONFIG_PMW3610_ORIENTATION_180)) {
-        x = raw_x;
-        y = -raw_y;
+        x = smoothed_x;
+        y = -smoothed_y;
     } else if (IS_ENABLED(CONFIG_PMW3610_ORIENTATION_270)) {
-        x = -raw_y;
-        y = raw_x;
+        x = -smoothed_y;
+        y = smoothed_x;
     }
 
     if (IS_ENABLED(CONFIG_PMW3610_INVERT_X)) {
