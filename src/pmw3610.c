@@ -638,19 +638,8 @@ int16_t y;
     float smoothing_factor = 0.7;     // Smoothing factor
     float sensitivity_multiplier = 1.5; // Base sensitivity multiplier
 
-    if (IS_ENABLED(CONFIG_PMW3610_ORIENTATION_0)) {
-        int orientation = 0;
-    } else if (IS_ENABLED(CONFIG_PMW3610_ORIENTATION_90)) {
-        int orientation = 90;
-    } else if (IS_ENABLED(CONFIG_PMW3610_ORIENTATION_180)) {
-        int orientation = 180;
-    } else if (IS_ENABLED(CONFIG_PMW3610_ORIENTATION_270)) {
-        int orientation = 270;
-    } else {
-        int orientation = 0;
-    }
 
-    double rad = (CONFIG_PMW3610_ROTATION_ANGLE + orientation) * (3.14159 / 180) * -1;
+    double rad = (CONFIG_PMW3610_ROTATION_ANGLE) * (3.14159 / 180) * -1;
 
     int16_t raw_x =
         TOINT16((buf[PMW3610_X_L_POS] + ((buf[PMW3610_XY_H_POS] & 0xF0) << 4)), 12) / dividor;
