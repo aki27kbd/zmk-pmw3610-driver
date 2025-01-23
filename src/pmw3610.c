@@ -693,8 +693,8 @@ int16_t y;
     x = x_accumulator;
     y = y_accumulator;
     
-    x_accumulator -= X;
-    y_accumulator -= y;
+    x_accumulator = 0;
+    y_accumulator = 0;
 
 #ifdef CONFIG_PMW3610_SMART_ALGORITHM
     int16_t shutter =
