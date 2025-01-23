@@ -17,6 +17,7 @@
 #include "pmw3610.h"
 
 #include <zephyr/logging/log.h>
+#include <math.h>
 LOG_MODULE_REGISTER(pmw3610, CONFIG_INPUT_LOG_LEVEL);
 
 //////// Sensor initialization steps definition //////////
