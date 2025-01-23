@@ -160,8 +160,8 @@ config PMW3610_AUTOMOUSE_TIMEOUT_MS
   default 400
 
 config PMW3610_ROTATION_ANGLE
-int "Rotation angle from Y-axis"
-default 0
+  int "Rotation angle from Y-axis"
+  default 0
 
 config PMW3610_MOVEMENT_THRESHOLD
     int "Movement threshold for automatic mouse layer activation"
