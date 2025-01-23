@@ -646,6 +646,8 @@ int16_t y;
         int orientation = 180;
     } else if (IS_ENABLED(CONFIG_PMW3610_ORIENTATION_270)) {
         int orientation = 270;
+    } else {
+        int orientation = 0;
     }
 
     double rad = (CONFIG_PMW3610_ROTATION_ANGLE + orientation) * (3.14159 / 180) * -1;
