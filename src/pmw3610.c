@@ -644,7 +644,7 @@ int16_t y;
     int16_t raw_y =
         TOINT16((buf[PMW3610_Y_L_POS] + ((buf[PMW3610_XY_H_POS] & 0x0F) << 8)), 12) / dividor;
 
-    float rotated_x = -(raw_x * cos(rad) - raw_y * sin(rad)); // Reverse X-direction
+    float rotated_x = (raw_x * cos(rad) - raw_y * sin(rad)); // Reverse X-direction
     float rotated_y = raw_x * sin(rad) + raw_y * cos(rad);
 
     // Apply smoothing to the rotated values
