@@ -15,7 +15,6 @@
 #include <zephyr/input/input.h>
 #include <zmk/keymap.h>
 #include "pmw3610.h"
-#include <math.h>
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(pmw3610, CONFIG_INPUT_LOG_LEVEL);
@@ -638,7 +637,7 @@ int16_t y;
     float smoothing_factor = 0.7;     // Smoothing factor
     float sensitivity_multiplier = 1.5; // Base sensitivity multiplier
 
-    double rad = CONFIG_PMW3610_ROTATION_ANGLE * (M_PI / 180) * -1;
+    double rad = CONFIG_PMW3610_ROTATION_ANGLE * (3.14159 / 180) * -1;
 
     int16_t raw_x =
         TOINT16((buf[PMW3610_X_L_POS] + ((buf[PMW3610_XY_H_POS] & 0xF0) << 4)), 12) / dividor;
