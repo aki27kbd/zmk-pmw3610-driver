@@ -689,11 +689,11 @@ int16_t y;
     x_accumulator += smoothed_x * sensitivity;
     y_accumulator += smoothed_y * sensitivity;
 
-    x = x_accumulator
-    y = y_accumulator
+    x = x_accumulator;
+    y = y_accumulator;
     
-    x_accumulator -= X
-    y_accumulator -= y
+    x_accumulator -= X;
+    y_accumulator -= y;
 
 #ifdef CONFIG_PMW3610_SMART_ALGORITHM
     int16_t shutter =
