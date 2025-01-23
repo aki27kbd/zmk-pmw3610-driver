@@ -655,7 +655,7 @@ int16_t y;
         raw_y = -raw_y;
     }
 
-    float rotated_x = (raw_x * cos(rad) - raw_y * sin(rad)); // Reverse X-direction
+    float rotated_x = -(raw_x * cos(rad) - raw_y * sin(rad)); // Reverse X-direction
     float rotated_y = raw_x * sin(rad) + raw_y * cos(rad);
 
     // Apply smoothing to the rotated values
