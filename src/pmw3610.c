@@ -638,9 +638,9 @@ int16_t y;
     float smoothing_factor = 0.7;     // Smoothing factor
     float sensitivity_multiplier = 1.5; // Base sensitivity multiplier
 
-    if (IS_ENABLED(CONFIG_PMW3610_ORIENTATION_0)) {
-        CONFIG_PMW3610_ROTATION_ANGLE += 0;
-    } else if (IS_ENABLED(CONFIG_PMW3610_ORIENTATION_90)) {
+    //if (IS_ENABLED(CONFIG_PMW3610_ORIENTATION_0)) {
+    //    CONFIG_PMW3610_ROTATION_ANGLE += 0;
+    if (IS_ENABLED(CONFIG_PMW3610_ORIENTATION_90)) {
         CONFIG_PMW3610_ROTATION_ANGLE += 90;
     } else if (IS_ENABLED(CONFIG_PMW3610_ORIENTATION_180)) {
         CONFIG_PMW3610_ROTATION_ANGLE += 180;
