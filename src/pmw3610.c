@@ -644,6 +644,28 @@ int16_t y;
     int16_t raw_y =
         TOINT16((buf[PMW3610_Y_L_POS] + ((buf[PMW3610_XY_H_POS] & 0x0F) << 8)), 12) / dividor;
 
+    if (IS_ENABLED(CONFIG_PMW3610_ORIENTATION_0)) {
+        raw_x = -raw_x;
+        raw_y = raw_y;
+    } else if (IS_ENABLED(CONFIG_PMW3610_ORIENTATION_90)) {
+        raw_x = raw_y;
+        raw_y = -raw_x;
+    } else if (IS_ENABLED(CONFIG_PMW3610_ORIENTATION_180)) {
+        raw_x = raw_x;
+        raw_y = -raw_y;
+    } else if (IS_ENABLED(CONFIG_PMW3610_ORIENTATION_270)) {
+        raw_x = -raw_y;
+        raw_y = raw_x;
+    }
+
+    if (IS_ENABLED(CONFIG_PMW3610_INVERT_X)) {
+        raw_x = -raw_x;
+    }
+
+    if (IS_ENABLED(CONFIG_PMW3610_INVERT_Y)) {
+        raw_y = -raw_y;
+    }
+
     float rotated_x = (raw_x * cos(rad) - raw_y * sin(rad)); // Reverse X-direction
     float rotated_y = raw_x * sin(rad) + raw_y * cos(rad);
 
@@ -660,31 +682,18 @@ int16_t y;
     // Dynamic multiplier: slower for small movements, faster for large
     float dynamic_multiplier = 1.0 + movement_magnitude / 10.0; // Adjust divisor for desired scaling
     dynamic_multiplier = fmin(fmax(dynamic_multiplier, 0.5), 2.0); // Clamp between 0.5 and 3.0
-    smoothed_x = smoothed_x * dynamic_multiplier;
-    smoothed_y = smoothed_y * dynamic_multiplier;
+    smoothed_x *= sensitivity_multiplier * dynamic_multiplier;
+    smoothed_y *= sensitivity_multiplier * dynamic_multiplier;
 #endif
 
-    if (IS_ENABLED(CONFIG_PMW3610_ORIENTATION_0)) {
-        x = -smoothed_x;
-        y = smoothed_y;
-    } else if (IS_ENABLED(CONFIG_PMW3610_ORIENTATION_90)) {
-        x = smoothed_y;
-        y = -smoothed_x;
-    } else if (IS_ENABLED(CONFIG_PMW3610_ORIENTATION_180)) {
-        x = smoothed_x;
-        y = -smoothed_y;
-    } else if (IS_ENABLED(CONFIG_PMW3610_ORIENTATION_270)) {
-        x = -smoothed_y;
-        y = smoothed_x;
-    }
+    x_accumulator += smoothed_x * sensitivity;
+    y_accumulator += smoothed_y * sensitivity;
 
-    if (IS_ENABLED(CONFIG_PMW3610_INVERT_X)) {
-        x = -x;
-    }
-
-    if (IS_ENABLED(CONFIG_PMW3610_INVERT_Y)) {
-        y = -y;
-    }
+    x = x_accumulator
+    y = y_accumulator
+    
+    x_accumulator -= X
+    y_accumulator -= y
 
 #ifdef CONFIG_PMW3610_SMART_ALGORITHM
     int16_t shutter =
