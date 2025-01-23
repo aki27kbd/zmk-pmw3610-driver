@@ -638,6 +638,16 @@ int16_t y;
     float smoothing_factor = 0.7;     // Smoothing factor
     float sensitivity_multiplier = 1.5; // Base sensitivity multiplier
 
+    if (IS_ENABLED(CONFIG_PMW3610_ORIENTATION_0)) {
+        CONFIG_PMW3610_ROTATION_ANGLE = CONFIG_PMW3610_ROTATION_ANGLE;
+    } else if (IS_ENABLED(CONFIG_PMW3610_ORIENTATION_90)) {
+        CONFIG_PMW3610_ROTATION_ANGLE += 90;
+    } else if (IS_ENABLED(CONFIG_PMW3610_ORIENTATION_180)) {
+        CONFIG_PMW3610_ROTATION_ANGLE += 180;
+    } else if (IS_ENABLED(CONFIG_PMW3610_ORIENTATION_270)) {
+        CONFIG_PMW3610_ROTATION_ANGLE += 270;
+    }
+
     double rad = CONFIG_PMW3610_ROTATION_ANGLE * (3.14159 / 180) * -1;
 
     int16_t raw_x =
@@ -645,19 +655,6 @@ int16_t y;
     int16_t raw_y =
         TOINT16((buf[PMW3610_Y_L_POS] + ((buf[PMW3610_XY_H_POS] & 0x0F) << 8)), 12) / dividor;
 
-    if (IS_ENABLED(CONFIG_PMW3610_ORIENTATION_0)) {
-        raw_x = -raw_x;
-        raw_y = raw_y;
-    } else if (IS_ENABLED(CONFIG_PMW3610_ORIENTATION_90)) {
-        raw_x = raw_y;
-        raw_y = -raw_x;
-    } else if (IS_ENABLED(CONFIG_PMW3610_ORIENTATION_180)) {
-        raw_x = raw_x;
-        raw_y = -raw_y;
-    } else if (IS_ENABLED(CONFIG_PMW3610_ORIENTATION_270)) {
-        raw_x = -raw_y;
-        raw_y = raw_x;
-    }
 
     if (IS_ENABLED(CONFIG_PMW3610_INVERT_X)) {
         raw_x = -raw_x;
@@ -690,11 +687,14 @@ int16_t y;
     x_accumulator += smoothed_x * sensitivity;
     y_accumulator += smoothed_y * sensitivity;
 
-    x = x_accumulator;
-    y = y_accumulator;
-    
-    x_accumulator = 0;
-    y_accumulator = 0;
+    int final_x = (int)x_accumulator;
+    int final_y = (int)y_accumulator;
+
+    x_accumulator -= final_x;
+    y_accumulator -= final_y;
+
+    x = final_x
+    y = final_y
 
 #ifdef CONFIG_PMW3610_SMART_ALGORITHM
     int16_t shutter =
