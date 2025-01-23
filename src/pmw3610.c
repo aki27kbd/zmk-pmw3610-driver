@@ -612,9 +612,13 @@ static int pmw3610_report_data(const struct device *dev) {
 
     data->curr_mode = input_mode;
 
+int16_t x;
+int16_t y;
+
 #if AUTOMOUSE_LAYER > 0
     if (input_mode == MOVE &&
-            (automouse_triggered || zmk_keymap_highest_layer_active() != AUTOMOUSE_LAYER)
+        (automouse_triggered || zmk_keymap_highest_layer_active() != AUTOMOUSE_LAYER) &&
+        (abs(x) + abs(y) > CONFIG_PMW3610_MOVEMENT_THRESHOLD)
     ) {
         activate_automouse_layer();
     }
@@ -633,14 +637,19 @@ static int pmw3610_report_data(const struct device *dev) {
     float smoothing_factor = 0.7;     // Smoothing factor
     float sensitivity_multiplier = 1.5; // Base sensitivity multiplier
 
+    double rad = CONFIG_PMW3610_ROTATION_ANGLE * (M_PI / 180) * -1;
+
     int16_t raw_x =
         TOINT16((buf[PMW3610_X_L_POS] + ((buf[PMW3610_XY_H_POS] & 0xF0) << 4)), 12) / dividor;
     int16_t raw_y =
         TOINT16((buf[PMW3610_Y_L_POS] + ((buf[PMW3610_XY_H_POS] & 0x0F) << 8)), 12) / dividor;
 
+    float rotated_x = -(raw_x * cos(rad) - raw_y * sin(rad)); // Reverse X-direction
+    float rotated_y = raw_x * sin(rad) + raw_y * cos(rad);
+
     // Apply smoothing to the rotated values
-    float smoothed_x = prev_x * smoothing_factor + raw_x * (1.0 - smoothing_factor);
-    float smoothed_y = prev_y * smoothing_factor + raw_y * (1.0 - smoothing_factor);
+    float smoothed_x = prev_x * smoothing_factor + rotated_x * (1.0 - smoothing_factor);
+    float smoothed_y = prev_y * smoothing_factor + rotated_y * (1.0 - smoothing_factor);
     prev_x = smoothed_x;
     prev_y = smoothed_y;
 
@@ -654,9 +663,6 @@ static int pmw3610_report_data(const struct device *dev) {
     smoothed_x = smoothed_x * dynamic_multiplier;
     smoothed_y = smoothed_y * dynamic_multiplier;
 #endif
-
-    int16_t x;
-    int16_t y;
 
     if (IS_ENABLED(CONFIG_PMW3610_ORIENTATION_0)) {
         x = -smoothed_x;
@@ -714,6 +720,14 @@ static int pmw3610_report_data(const struct device *dev) {
 
     if (x != 0 || y != 0) {
         if (input_mode != SCROLL) {
+#if AUTOMOUSE_LAYER > 0
+            int16_t movement_size = abs(x) + abs(y);
+            if (input_mode == MOVE &&
+                (automouse_triggered || zmk_keymap_highest_layer_active() != AUTOMOUSE_LAYER) &&
+                movement_size > CONFIG_PMW3610_MOVEMENT_THRESHOLD) {
+                activate_automouse_layer();
+            }
+#endif
             input_report_rel(dev, INPUT_REL_X, x, false, K_FOREVER);
             input_report_rel(dev, INPUT_REL_Y, y, true, K_FOREVER);
         } else {
