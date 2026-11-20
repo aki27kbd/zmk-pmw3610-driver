@@ -492,6 +492,9 @@ static int pmw3610_report_data(const struct device *dev) {
 #endif
     int16_t rx = (int16_t)CLAMP(rotated_x, INT16_MIN, INT16_MAX);
     int16_t ry = (int16_t)CLAMP(rotated_y, INT16_MIN, INT16_MAX);
+    /* The rotation state now owns any fractional movement. */
+    dx = 0;
+    dy = 0;
     bool have_x = rx != 0;
     bool have_y = ry != 0;
 
@@ -499,8 +502,6 @@ static int pmw3610_report_data(const struct device *dev) {
 #if CONFIG_PMW3610_REPORT_INTERVAL_MIN > 0
         last_rpt_time = now;
 #endif
-        dx = 0;
-        dy = 0;
         bool report_x = have_x || IS_ENABLED(CONFIG_PMW3610_REPORT_ZERO_AXES);
         bool report_y = have_y || IS_ENABLED(CONFIG_PMW3610_REPORT_ZERO_AXES);
         if (report_x) {
