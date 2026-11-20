@@ -43,6 +43,14 @@ config PMW3610_REPORT_INTERVAL_MIN
 		Slow down input reporting for hid queue over the air.
 		Turn value down to 8ms to get sharp response if use with USB only.
 
+config PMW3610_REPORT_ZERO_AXES
+    bool "Report paired X/Y events including a zero-valued axis"
+    default n
+    help
+      Emit both X and Y for every movement frame. Enable when a downstream
+      rotation processor needs paired axes, even for pure horizontal or
+      vertical movement. The final Y event synchronizes the report.
+
 config PMW3610_SMART_ALGORITHM
   bool "Enable an algorithm of PMW3610 to enhance surface coverage"
   default y

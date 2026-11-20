@@ -496,10 +496,12 @@ static int pmw3610_report_data(const struct device *dev) {
 #endif
         dx = 0;
         dy = 0;
-        if (have_x) {
-            input_report(dev, config->evt_type, config->x_input_code, rx, !have_y, K_NO_WAIT);
+        bool report_x = have_x || IS_ENABLED(CONFIG_PMW3610_REPORT_ZERO_AXES);
+        bool report_y = have_y || IS_ENABLED(CONFIG_PMW3610_REPORT_ZERO_AXES);
+        if (report_x) {
+            input_report(dev, config->evt_type, config->x_input_code, rx, !report_y, K_NO_WAIT);
         }
-        if (have_y) {
+        if (report_y) {
             input_report(dev, config->evt_type, config->y_input_code, ry, true, K_NO_WAIT);
         }
     }

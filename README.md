@@ -1,5 +1,16 @@
 PMW3610 driver implementation for ZMK
 
+## coron44bt paired-axis integration
+
+Branch `codex/paired-axis-trackball` is based on cormoran driver revision
+`28a32bec3e22bbfbfc2469e096f65e84302211cf`.
+
+Set `CONFIG_PMW3610_REPORT_ZERO_AXES=y` when a downstream rotation processor
+expects paired X/Y events. Every movement then includes X followed by Y,
+including an explicit zero on the stationary axis, with Y synchronizing the
+frame. This avoids pure-axis movement being suppressed by a processor waiting
+for the missing axis. The default remains the upstream sparse reporting mode.
+
 This work is based on [ufan's zmk pixart sensor drivers](https://github.com/ufan/zmk/tree/support-trackpad), [inorichi's zmk-pmw3610-driver](https://github.com/inorichi/zmk-pmw3610-driver), and [Zephyr PMW3610 driver](https://github.com/zephyrproject-rtos/zephyr/blob/main/drivers/input/input_pmw3610.c).
 
 #### What is different to [inorichi's driver](https://github.com/inorichi/zmk-pmw3610-driver)
