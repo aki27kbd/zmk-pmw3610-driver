@@ -485,8 +485,13 @@ static int pmw3610_report_data(const struct device *dev) {
 #endif
 
     // fetch report value
-    int16_t rx = (int16_t)CLAMP(dx, INT16_MIN, INT16_MAX);
-    int16_t ry = (int16_t)CLAMP(dy, INT16_MIN, INT16_MAX);
+    int32_t rotated_x = CLAMP(dx, INT16_MIN, INT16_MAX);
+    int32_t rotated_y = CLAMP(dy, INT16_MIN, INT16_MAX);
+#if CONFIG_PMW3610_ROTATION_ANGLE != 0
+    pmw3610_rotation_apply(&data->rotation, &rotated_x, &rotated_y);
+#endif
+    int16_t rx = (int16_t)CLAMP(rotated_x, INT16_MIN, INT16_MAX);
+    int16_t ry = (int16_t)CLAMP(rotated_y, INT16_MIN, INT16_MAX);
     bool have_x = rx != 0;
     bool have_y = ry != 0;
 
@@ -578,6 +583,10 @@ static int pmw3610_init(const struct device *dev) {
     struct pixart_data *data = dev->data;
     const struct pixart_config *config = dev->config;
     int err;
+
+#if CONFIG_PMW3610_ROTATION_ANGLE != 0
+    pmw3610_rotation_init(&data->rotation, CONFIG_PMW3610_ROTATION_ANGLE);
+#endif
 
 	if (!spi_is_ready_dt(&config->spi)) {
 		LOG_ERR("%s is not ready", config->spi.bus->name);

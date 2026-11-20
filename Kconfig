@@ -51,6 +51,15 @@ config PMW3610_REPORT_ZERO_AXES
       rotation processor needs paired axes, even for pure horizontal or
       vertical movement. The final Y event synchronizes the report.
 
+config PMW3610_ROTATION_ANGLE
+    int "Calibrate sensor rotation before reporting paired X/Y"
+    default 0
+    range -359 359
+    help
+      Rotate the complete sensor vector before emitting individual axis
+      events. Fractional movement is carried between frames. Leave downstream
+      runtime rotation at zero when using this calibration.
+
 config PMW3610_SMART_ALGORITHM
   bool "Enable an algorithm of PMW3610 to enhance surface coverage"
   default y

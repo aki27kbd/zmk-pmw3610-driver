@@ -1,0 +1,17 @@
+name: Test vector calibration
+on:
+  push:
+    paths:
+      - 'src/pmw3610_rotation.h'
+      - 'tests/rotation.c'
+      - '.github/workflows/rotation-test.yml'
+  workflow_dispatch:
+jobs:
+  rotation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test paired vector calibration and fractional movement
+        run: |
+          cc -std=c11 -Wall -Wextra -Werror -Isrc tests/rotation.c -lm -o /tmp/pmw3610-rotation-test
+          /tmp/pmw3610-rotation-test

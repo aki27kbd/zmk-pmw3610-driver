@@ -11,6 +11,11 @@ including an explicit zero on the stationary axis, with Y synchronizing the
 frame. This avoids pure-axis movement being suppressed by a processor waiting
 for the missing axis. The default remains the upstream sparse reporting mode.
 
+`CONFIG_PMW3610_ROTATION_ANGLE` calibrates the complete sensor vector before
+it is split into input events, retaining fractional movement across frames.
+The coron44bt build uses -30 degrees here and zero downstream rotation, so
+cross-axis rotation does not use coordinates from a previous input frame.
+
 This work is based on [ufan's zmk pixart sensor drivers](https://github.com/ufan/zmk/tree/support-trackpad), [inorichi's zmk-pmw3610-driver](https://github.com/inorichi/zmk-pmw3610-driver), and [Zephyr PMW3610 driver](https://github.com/zephyrproject-rtos/zephyr/blob/main/drivers/input/input_pmw3610.c).
 
 #### What is different to [inorichi's driver](https://github.com/inorichi/zmk-pmw3610-driver)

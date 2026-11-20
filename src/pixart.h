@@ -10,6 +10,7 @@
 #include <zephyr/drivers/spi.h>
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/drivers/sensor.h>
+#include "pmw3610_rotation.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -30,6 +31,7 @@ struct pixart_data {
 
     bool ready;  // whether init is finished successfully
     bool last_read_burst;
+    struct pmw3610_rotation_state rotation;
     int err;  // error code during async init
 };
 
